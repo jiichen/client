@@ -58,7 +58,14 @@ ShareLinkWidget::ShareLinkWidget(AccountPtr account,
     //Is this a file or folder?
     QFileInfo fi(localPath);
     _isFile = fi.isFile();
-    _ui->nameLineEdit->setText(tr("%1 link").arg(fi.fileName()));
+
+    // Set the default link share name: it cannot be >64 characters
+    QString defaultLinkNamePattern = tr("%1 link");
+    int maxFilenameSize = 64 - (defaultLinkNamePattern.size() - 2);
+    QString filename = fi.fileName();
+    if (filename.size() > maxFilenameSize)
+        filename = filename.left(maxFilenameSize - 3) + "...";
+    _ui->nameLineEdit->setText(defaultLinkNamePattern.arg(filename));
 
     // the following progress indicator widgets are added to layouts which makes them
     // automatically deleted once the dialog dies.
